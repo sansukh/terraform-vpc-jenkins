@@ -3,6 +3,9 @@ pipeline {
     tools {
         terraform 'terraform'
         }
+    parameters {
+  choice choices: ['apply', 'destroy'], name: 'apply_destroy'
+}
     stages {
      stage('Git Checkout') {
             steps {
@@ -27,18 +30,18 @@ pipeline {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
                 {
-                sh 'terraform apply --auto-approve'
+                    sh 'terraform ${apply_destroy} --auto-approve'
                 }
             }
         }
-        stage('Terraform Destroy') {
-            steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
-                {
+//         stage('Terraform Destroy') {
+//             steps {
+//                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
+//                 {
                 
-                sh 'terraform destroy --auto-approve'
-                }
-            }
-        }
+//                 sh 'terraform destroy --auto-approve'
+//                 }
+//             }
+//         }
     }
 }
