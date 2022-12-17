@@ -4,7 +4,7 @@ pipeline {
         terraform 'terraform'
         }
     parameters {
-  choice choices: ['apply', 'destroy'], name: 'apply_destroy'
+  choice choices: ['apply', 'destroy'], name: 'terraform_state'
 }
     stages {
      stage('Git Checkout') {
@@ -26,11 +26,11 @@ pipeline {
                 }
             }
             }
-        stage('Terraform Apply') {
+        stage('Terraform ${terraform_state}') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
                 {
-                    sh 'terraform ${apply_destroy} --auto-approve'
+                    sh 'terraform ${terraform_state} --auto-approve'
                 }
             }
         }
